@@ -15,7 +15,7 @@
    :output-dir "public/js"
    :asset-path "/js"
    :modules    {:main
-                {:init-fn {{project_name}}.app.core/main}}}
+                {:init-fn <%=project-name%>.app.core/main}}}
   :test
   {:target     :node-test
    :output-to  "out/node/tests.js"

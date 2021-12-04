@@ -1,5 +1,5 @@
-(ns {{project_name}}.app.core
-  (:require [reagent.dom :as rdom]))
+(ns <%= project-name %>.app.core
+    (:require [reagent.dom :as rdom]))
 
 (defn app []
   [:h1 "Create Reagent App"])

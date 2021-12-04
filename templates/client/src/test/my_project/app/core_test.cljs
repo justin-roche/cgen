@@ -1,1 +1,1 @@
-(ns {{project_name}}.app.core-test)
+(ns <%= project-name %>.app.core-test)
