@@ -7,6 +7,7 @@
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [com.rpl/specter "1.1.3"]
                  [de.ubercode.clostache/clostache "1.4.0"]
+                 [metosin/malli "0.6.2"]
                  [vivid/art "0.5.0"]
                  [tupelo "21.11.06a"]
                  [stencil "0.5.0"]

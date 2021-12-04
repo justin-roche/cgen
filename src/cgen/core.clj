@@ -1,63 +1,43 @@
+
 (ns cgen.core
   (:require
-   [clojure.java.io :as io]
-   [clojure.edn]
-   [clojure.string :as str]
-   [clojure.reflect :as r]
-   [vivid.art :as art]
-   [clojure.pprint :refer [print-table]]
-   [babashka.fs :refer [path copy-tree delete-tree create-dir walk-file-tree]]))
+   [babashka.fs :refer [copy-tree delete-tree]]
+   [cgen.templating :refer [render-files]]
+   [cgen.fileutils :refer [rename-directories]]
+   [malli.core :as m]
+   [clojure.edn]))
 
-(def exts ["cljs", "clj", "html", "json", "edn"])
-(def working_dir (System/getProperty "user.dir"))
-(def server_template_dir (str working_dir "/templates/server/"))
-(def client_template_dir (str working_dir "/templates/client/"))
-(def project-name "tt")
+(def resources-dir (System/getProperty "user.dir"))
+(def working-dir "/Users/justinroche/projects/cgen-generated")
 
-(def dest_dir "/Users/justinroche/projects/cgen-generated/")
-(def server_dest_dir "/Users/justinroche/projects/cgen-generated/server")
-(def client_dest_dir "/Users/justinroche/projects/cgen-generated/client")
+(def settings {:exts ["cljs", "clj", "html", "json", "edn"]
+               :server-template-dir (str resources-dir "/templates/server/")
+               :client-template-dir (str resources-dir "/templates/client/")
+               :server-dest-dir (str working-dir "/server")
+               :client-dest-dir (str working-dir "/server")
+               :template-exts ["cljs", "clj", "html", "json", "edn"]
+               :output-dir working-dir
+               :project-name "tt"})
 
-(defn create-server! [template]
-  (let [template_dir (case template
-                       "server"         server_dest_dir)]
-    (copy-tree server_template_dir server_dest_dir)))
+(defn create-server! []
+  (copy-tree (:server-template-dir settings) (:server-dest-dir settings)))
 
-(defn create-client! [template]
-  (let [template_dir (case template
-                       "client"         client_dest_dir)]
-    (copy-tree client_template_dir client_dest_dir)))
-
-(defn render-file [upath uattr]
-  (let [p (.toString upath)
-        ext (last (str/split p #"\."))
-        valid (some #(= ext %) exts)]
-    (if valid
-      (let [input (slurp p)
-            output (art/render input {:bindings {'project-name "whoa"}})]
-        (println (str "templating: " (.toString upath)))
-        (spit p output)
-        (keyword "continue"))
-      (keyword "continue"))))
-
-(defn render-files []
-  (walk-file-tree client_dest_dir {:visit-file render-file
-                                   :max-depth 100}))
-
-(defn rename-directories []
-  (let [old-name (str client_dest_dir "/src/test/my_project")
-        new-name (str client_dest_dir "/src/test/" project-name)]
-    (copy-tree old-name new-name)
-    (delete-tree old-name)))
+(defn create-client! []
+  (copy-tree (:client-template-dir settings) (:client-dest-dir settings)))
 
 (defn delete-directories []
-  (delete-tree client_dest_dir))
+  (delete-tree (:client-dest-dir settings))
+  (delete-tree (:server-dest-dir settings)))
 
 (defn  main []
   (delete-directories)
-  (create-client! "client")
-  ;; (create-server! "server")
-  (rename-directories)
-  (render-files))
+  (create-client!)
+  (create-server!)
+  (render-files settings)
+  (rename-directories [{:old (str  (:client-dest-dir settings) "/src/test/my_project")
+                        :new (:project-name settings)}
+                       {:old (str  (:client-dest-dir settings) "/src/main/my_project")
+                        :new (:project-name settings)}]))
 
 (main)
+
