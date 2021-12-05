@@ -11,7 +11,7 @@
         valid (some #(= ext %) (:exts settings))]
     (if valid
       (let [input (slurp p)
-            output (art/render input {:bindings {'project-name "whoa"}})]
+            output (art/render input {:bindings {'project-name (:project-name settings)}})]
         (if (not (= input output))
           (do
             (println (str "templating: " (.toString upath)))
