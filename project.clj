@@ -11,6 +11,5 @@
                  [clj-commons/conch "0.9.2"]
                  [vivid/art "0.5.0"]
                  [tupelo "21.11.06a"]
-                 [stencil "0.5.0"]
                  [babashka/fs "0.1.2"]]
   :repl-options {:init-ns cgen.core})

@@ -33,6 +33,18 @@
   (if (exists? (:server-dest-dir settings))
     (delete-tree (:server-dest-dir settings))))
 
+(defn run-shells []
+  (let [p (str  (:client-dest-dir default-settings))]
+    (println "npm installing...")
+    (println (:out (sh "npm" "install" :dir p)))
+    (println "lein deps...")
+    (println (:out (sh "lein" "deps"
+                       ;; :env (dissoc current-env "CLASSPATH")
+                       :dir (:server-dest-dir default-settings))))
+    ;; (println "lein run...")
+    ;; (println (:out (sh "lein" "run" :dir (:server-dest-dir default-settings))))
+    ))
+
 (def Settings
   (m/schema
    [:map
@@ -54,22 +66,15 @@
       (rename-directories [{:old (str  (:client-dest-dir settings) "/src/test/my_project")
                             :new (:project-name settings)}
                            {:old (str  (:client-dest-dir settings) "/src/main/my_project")
-                            :new (:project-name settings)}])
-      (npm-install))))
-
-(defn npm-install []
-  (let [p (str  (:client-dest-dir default-settings))]
-    (println "npm installing...")
-    (println (:out (sh "npm" "install" :dir p)))
-    (println "lein deps...")
-    (println (:out (sh "lein" "deps" :dir (:server-dest-dir default-settings))))
-    (println "lein run...")
-    (println (:out (sh "lein" "run" :dir (:server-dest-dir default-settings))))))
+                            :new (:project-name settings)}]))))
 
 (defn main []
-  (generate-project default-settings))
+  (generate-project default-settings)
+  (run-shells))
 
 (comment
   (main))
 
-(main)
+;; (main)
+
+;; (println "complete")
