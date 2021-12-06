@@ -15,10 +15,15 @@
 (def default-settings {:output-dir working-dir
                        :project-name "tt"
                        :template-exts ["cljs", "clj", "html", "json", "edn"]
+                       :db-template-dir (str resources-dir "/templates/db/")
                        :server-template-dir (str resources-dir "/templates/server/")
                        :client-template-dir (str resources-dir "/templates/client/")
+                       :db-dest-dir (str working-dir "/db")
                        :server-dest-dir (str working-dir "/server")
                        :client-dest-dir (str working-dir "/client")})
+
+(defn create-db! [settings]
+  (copy-tree (:db-template-dir settings) (:db-dest-dir settings)))
 
 (defn create-server! [settings]
   (copy-tree (:server-template-dir settings) (:server-dest-dir settings)))
@@ -30,6 +35,8 @@
   (if (exists? (:client-dest-dir settings))
     (delete-tree (:client-dest-dir settings))
     (println "client dir does not exist"))
+  (if (exists? (:db-dest-dir settings))
+    (delete-tree (:db-dest-dir settings)))
   (if (exists? (:server-dest-dir settings))
     (delete-tree (:server-dest-dir settings))))
 
@@ -50,6 +57,8 @@
    [:map
     [:client-template-dir :string]
     [:client-dest-dir :string]
+    [:db-template-dir :string]
+    [:db-dest-dir :string]
     [:server-template-dir :string]
     [:project-name :string]
     [:server-dest-dir :string]
@@ -61,6 +70,7 @@
       (delete-directories settings)
       (create-client! settings)
       (create-server! settings)
+      (create-db! settings)
       (render-files (merge settings {:exts ["cljs", "clj", "json", "edn",
                                             "html"]}))
       (rename-directories [{:old (str  (:client-dest-dir settings) "/src/test/my_project")

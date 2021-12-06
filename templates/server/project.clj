@@ -7,5 +7,8 @@
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [com.stuartsierra/component "1.0.0"]
                  [com.walmartlabs/lacinia-pedestal "1.0"]
-                 [io.aviso/logging "0.2.0"]]
+                 [io.aviso/logging "0.2.0"]
+                 [org.clojure/java.jdbc "0.7.8"]
+                 [org.postgresql/postgresql "42.2.5.jre7"]
+                 [com.mchange/c3p0 "0.9.5.2"]]
   :repl-options {:init-ns server.core})
