@@ -1,14 +1,5 @@
-(ns <%= project-name %>.app.core
-    (:require [reagent.dom :as rdom]))
+(ns ^:av app-name.app.core
+  (:require [reagent.dom :as rdom]))
 
-(defn app []
+(defn ^:av app []
   [:h1 "Create Reagent App"])
-
-(defn render []
-  (rdom/render [app] (.getElementById js/document "root")))
-
-(defn ^:export main []
-  (render))
-
-(defn ^:dev/after-load reload! []
-  (render))

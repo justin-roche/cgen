@@ -1,24 +1,20 @@
 (ns cgen.structure-edit
-  (:require
-   [com.rpl.specter :as specter]
-   [clojure.edn]
-   [tupelo.core :as t]
-   [babashka.fs :refer [copy-tree delete-tree]]))
+  (:require [rewrite-clj.node :as n] [rewrite-clj.zip :as z]))
 
-(defn change-ns-name []
-;;   (let [input (slurp filepath)
-;;         data (clojure.edn/read-string (str "[" input "]"))
-;;         output  (map (fn [form]
-;;                        (println (type form))
-;;                        (if (= 'ns (first form))
-;;                          (apply list (t/replace-at form 1 (:project-name vars)))
-;;                          form)) data)
-;;         out-str (prn-str output)]
-  (spit filepath out-str) (println "finished"))
+(def inp (slurp "/Users/justinroche/projects/cgen/templates/client/src/main/my_project/app/core.cljs"))
 
-(i)
+(defn av-metadata? [n]
+  (if (= (z/tag n) :meta)
+    true
+    false))
 
+(defn walk-metadata [loc]
+  (loop [zloc loc]
+    (if (z/end? zloc)
+      (z/root-string zloc)
+      (if (av-metadata? zloc)
+        (recur (z/next (z/remove zloc)))
+        (recur (z/next zloc))))))
 
-
-
+(println (walk-metadata (z/of-string inp {:track-position true})))
 
