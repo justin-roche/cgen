@@ -4,6 +4,7 @@
 
  :dependencies
  [[reagent            "1.0.0"]
+  [re-frame "1.2.0"]
   [binaryage/devtools "1.0.2"]]
 
  :dev-http

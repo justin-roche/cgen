@@ -44,6 +44,7 @@
    (query component
           ["select game_id, name, summary, min_players, max_players, created_at, updated_at
              from board_game where game_id = ?" game-id])))
+
 (defn find-member-by-id
   [component member-id]
   (first

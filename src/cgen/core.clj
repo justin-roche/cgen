@@ -80,7 +80,8 @@
 
 (defn main []
   (generate-project default-settings)
-  (run-shells))
+  (run-shells)
+  )
 
 (comment
   (main))
