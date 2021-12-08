@@ -1,46 +1,37 @@
-(ns ^:av tt.app.core
-  (:require [re-frame.core :as rf]
-            [tt.app.db]
-            [tt.app.events :refer [dispatch-timer-event]]
-            [tt.app.eventhandlers]
-            [tt.app.subscriptions]
-            [reagent.dom :as rdom]))
+(ns tt.app.core
+  (:require-macros [secretary.core :refer [defroute]])
+  (:require [goog.events :as events]
+            [reagent.dom]
+            [re-frame.core :as rf :refer [dispatch dispatch-sync]]
+            [secretary.core :as secretary]
+            [tt.app.events] ;; These two are only required to make the compiler
+            [tt.app.subs]
+            [tt.app.views])
+  (:import [goog History]
+           [goog.history EventType]))
 
-(defonce do-timer (js/setInterval dispatch-timer-event 1000))
+(enable-console-print!)
+(dispatch-sync [:initialise-db])
 
-(defn clock
+(defroute "/" [] (dispatch [:set-showing :all]))
+(defroute "/:filter" [filter] (dispatch [:set-showing (keyword filter)]))
+
+(defonce history
+  (doto (History.)
+    (events/listen EventType.NAVIGATE
+                   (fn [^js/goog.History.Event event] (secretary/dispatch! (.-token event))))
+    (.setEnabled true)))
+
+(defn render
   []
-  (let [colour @(rf/subscribe [:time-color])
-        time   (-> @(rf/subscribe [:time])
-                   .toTimeString
-                   (clojure.string/split " ")
-                   first)]
-    [:div.example-clock {:style {:color colour}} time]))
+  (reagent.dom/render [tt.app.views/todo-app]
+                      (.getElementById js/document "app")))
 
-(defn color-input
+(defn ^:dev/after-load clear-cache-and-render!
   []
-  (let [gettext (fn [e] (-> e .-target .-value))
-        emit    (fn [e] (rf/dispatch [:time-color-change (gettext e)]))]
-    [:div.color-input
-     "Display color: "
-     [:input {:type "text"
-              :style {:border "1px solid #CCC"}
-              :value @(rf/subscribe [:time-color])
-              :on-change emit}]]))
+  (rf/clear-subscription-cache!)
+  (render))
 
-(defn simple-component []
-  [:div
-   [clock]
-   [color-input]
-   [:p "I am a component!"]
-   [:p.someclass
-    "I have " [:strong "bold"]
-    [:span {:style {:color "red"}} " and red "] "text."]])
-
-(defn ^:av app-component []
-  [:h1 "Create Reagent App"]
-  [simple-component])
-
-(defn ^:export main []
-  (rf/dispatch-sync [:initialize])
-  (rdom/render [app-component] (js/document.getElementById "root")))
+(defn ^:export main
+  []
+  (render))
