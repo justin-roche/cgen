@@ -34,6 +34,7 @@
 ;;      (filter filter-fn todos))))
 
 ;; explicit db input signal (state slice) with sugarfied subscribes followed by computation
+
 (reg-sub
  :visible-todos
  :<- [:todos]

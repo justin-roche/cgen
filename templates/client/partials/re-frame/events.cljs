@@ -1,3 +1,5 @@
+;; events modify the db state
+
 (ns tt.app.events
   (:require
    [tt.app.db    :refer [default-db todos->local-store]]
@@ -9,6 +11,8 @@
   [a-spec db]
   (when-not (s/valid? a-spec db)
     (throw (ex-info (str "spec check failed: " (s/explain-str a-spec db)) {}))))
+
+;; -- Interceptors -----------------------------------------------------------------
 
 (def check-spec-interceptor (after (partial check-and-throw :tt.app.db/db)))
 
@@ -36,6 +40,7 @@
    {:db (assoc default-db :todos local-store-todos)}))   ;; all hail the new state to be put in app-db
 
 ;; -- (Db) Event Handlers (return Db value) -----------------------------------------------------------------
+;; S = dispatch -> (before) Eh (after)  -> subscriptions
 
 ;; (reg-event-db
 ;;  :set-showing

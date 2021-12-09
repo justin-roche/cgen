@@ -4,6 +4,8 @@
 
  :dependencies
  [[reagent            "1.0.0"]
+  [re-frame "1.2.0"]
+  [re-graph "0.1.16"]
   [clj-commons/secretary      "1.2.4"]
   [binaryage/devtools "1.0.2"]]
 

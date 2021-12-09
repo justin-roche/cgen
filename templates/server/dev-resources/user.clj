@@ -1,11 +1,8 @@
 (ns user
   (:require
-   [com.walmartlabs.lacinia :as lacinia]
    [clojure.java.browse :refer [browse-url]]
    [app.system :as system]
-   [clojure.walk :as walk]
-   [com.stuartsierra.component :as component])
-  (:import (clojure.lang IPersistentMap)))
+   [com.stuartsierra.component :as component]))
 
 (defonce system (system/new-system))
 
