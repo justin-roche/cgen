@@ -8,6 +8,6 @@
 (defn new-system
   []
   (merge (component/system-map)
-         (server/new-server)
+         (server/new-server )
          ;; (db/new-db)
          ))
