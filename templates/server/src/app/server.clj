@@ -2,16 +2,19 @@
   (:require [com.stuartsierra.component :as component]
             [io.pedestal.http :as http]))
 
-(defrecord Server [service-map server]
+(defrecord Server [service-map service]
 
   component/Lifecycle
   (start [this]
-    (assoc this :server (-> (http/create-server)
-                            http/start)))
+    (if service
+      this
+      (cond-> service-map
+        true                      http/create-server
+        true                      ((partial assoc this :service)))))
 
   (stop [this]
-    (http/stop server)
-    (assoc this :server nil)))
+    (http/stop service)
+    (assoc this :service nil)))
 
 (defn new-server
   []

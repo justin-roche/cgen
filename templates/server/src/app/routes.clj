@@ -1,4 +1,4 @@
-(ns app.server
+(ns app.routes
   (:require [com.stuartsierra.component :as component]
             [io.pedestal.http.route :as route]))
 
