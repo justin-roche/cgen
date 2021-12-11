@@ -1,7 +1,9 @@
 (ns user
   (:require
-   [clojure.java.browse :refer [browse-url]]
    [app.system :as system]
+   [app.core :as core]
+   [app.routes :as routes]
+   [io.pedestal.http.route :as route]
    [com.stuartsierra.component :as component]))
 
 (defonce system (system/new-system))
@@ -17,10 +19,13 @@
 (defn start
   []
   (alter-var-root #'system component/start-system)
-  (browse-url "http://localhost:8888/")
   :started)
 
 (defn stop
   []
   (alter-var-root #'system component/stop-system)
   :stopped)
+
+(defn tt []
+  (route/try-routing-for routes/routes :prefix-tree "/greet" :get)
+)

@@ -2,7 +2,6 @@
   (:require [monger.core :as mg]
             [monger.collection :as mc]
             [com.stuartsierra.component :as component]
-            [io.pedestal.http :as http]
             [monger.conversion :as mcc]
             [monger.credentials :as mgc])
   (:import [com.mongodb MongoOptions ServerAddress]))
@@ -32,7 +31,6 @@
   (let [cred (mgc/create "root" "admin" "rootpassword")
         conn (mg/connect-with-credentials "localhost" 27017 cred)
         db   (mg/get-db conn "monger-test")]
-    (println "wow")
     {:db db :conn conn}))
 
 (defrecord Database [db-config db]
@@ -44,13 +42,14 @@
       (cond-> db-config
         true                      db-connect
         true                      ((fn [db-and-conn]
-                                     (println db-and-conn)
+                                     ;; (println db-and-conn)
                                      (merge this db-and-conn))))))
 
   (stop [this]
-    ;; (http/stop service)
+    (assoc this :conn nil)
     (assoc this :db nil)))
 
 (defn new-database
   []
   (map->Database {}))
+

@@ -18,4 +18,4 @@
                  [org.clojure/java.jdbc "0.7.8"]
                  [org.postgresql/postgresql "42.2.5.jre7"]
                  [com.mchange/c3p0 "0.9.5.2"]]
-  :repl-options {:init-ns server.core})
+  :repl-options {:init-ns app.user})
