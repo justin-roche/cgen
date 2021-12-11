@@ -13,6 +13,7 @@
                  [io.pedestal/pedestal.interceptor "0.5.9"] ;; The Interceptor chain and the Interceptor API
                  [io.pedestal/pedestal.route       "0.5.9"] ;; Efficient routing algorithms and data structures
                  [io.aviso/logging "0.2.0"]
+                 [com.novemberain/monger "3.1.0"]
                  [org.slf4j/slf4j-simple       "1.7.28"]
                  [org.clojure/java.jdbc "0.7.8"]
                  [org.postgresql/postgresql "42.2.5.jre7"]
