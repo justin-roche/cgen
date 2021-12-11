@@ -18,13 +18,15 @@
     ::http/join?  false}
    :db-config
    {:env          env
-    :port   0
-   }
+    :port   27017
+    :host   "localhost"
+    :db "mongo-test"
+    :cred-user "root"
+    :cred-db "admin"
+    :cred-password "rootpassword"}
    :db
    (component/using (db/new-database) [:db-config])
    :pedestal
    (component/using (server/new-server) [:service-map
-                                         :db
-                                         ])
-   ))
+                                         :db])))
 

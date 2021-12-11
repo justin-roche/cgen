@@ -3,15 +3,6 @@
             [io.pedestal.interceptor :as i]
             [io.pedestal.http :as http]))
 
-(def attach-guid
-  {:name ::attach-guid
-   :enter (fn [context] (assoc context ::guid (java.util.UUID/randomUUID)))})
-
-(def say-hello
-  (i/interceptor {:name ::say-hello
-    :enter (fn [context]
-             (assoc context :response {:body "Goodbye, world!"
-                                       :status 200}))}))
 
 (defn get-db-interceptor [db]
   (i/interceptor {:name :database-interceptor

@@ -27,10 +27,11 @@
 (defn db-disconnect [conn]
   mg/disconnect conn)
 
-(defn db-connect [db-config]
-  (let [cred (mgc/create "root" "admin" "rootpassword")
-        conn (mg/connect-with-credentials "localhost" 27017 cred)
-        db   (mg/get-db conn "monger-test")]
+(defn db-connect [{:keys [ cred-db cred-user cred-password host port db ]}]
+  (let [cred (mgc/create cred-user cred-db cred-password)
+        conn (mg/connect-with-credentials host port cred)
+        db   (mg/get-db conn db)]
+    (println db)
     {:db db :conn conn}))
 
 (defrecord Database [db-config db]
@@ -42,10 +43,10 @@
       (cond-> db-config
         true                      db-connect
         true                      ((fn [db-and-conn]
-                                     ;; (println db-and-conn)
                                      (merge this db-and-conn))))))
 
   (stop [this]
+    (db-disconnect (:conn this))
     (assoc this :conn nil)
     (assoc this :db nil)))
 
