@@ -28,8 +28,6 @@
     (jwt/sign payload private-key {:alg :hs512})))
 
 (def db
-  "We use a simple map as a db here but in real-world you would
-  interface with a real data storage in `basic-auth` function."
   {"user1"
    {:id       1
     :password (buddy-hashers/encrypt "kissa13")
@@ -45,12 +43,14 @@
      (let [username (get-in r [:request :body-params :username])
            password (get-in r [:request :body-params :password])
            user (get db username)]
-       (println username)
+       (println (str "checking auth username" username " " password))
        (if (and user (buddy-hashers/check password (:password user)))
          (update r :user r (-> user
                                (dissoc :password)
-                               (assoc :token (create-token user)
-                                      ))))))})
+                               (assoc :token (create-token user))))
+         (throw
+          (ex-info "unauthorized" {:status 401})))))})
+
 (def token-backend
   "Backend for verifying JWT-tokens."
   (buddy-auth-backends/jws {:secret private-key :options {:alg :hs512}}))

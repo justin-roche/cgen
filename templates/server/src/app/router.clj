@@ -3,6 +3,7 @@
    [io.pedestal.http.route :as route]
    [app.hero :as hero]
    [app.auth :as auth]
+   [app.errors :as errors]
    [com.stuartsierra.component :as component]
    [io.pedestal.interceptor :as i]
    [reitit.http.coercion :as coercion]
@@ -43,7 +44,8 @@
 
 (defn make-routes [db]
   [""
-   {:interceptors [(get-db-interceptor db)]}
+   {:interceptors [(errors/error-interceptor)
+                   (get-db-interceptor db)]}
    ["/login"
     {:post
      {:handler (fn [req]
@@ -51,7 +53,7 @@
                   :body
                   {:message "basic auth succeeded!"
                    :user    (-> req :identity)}})
-      :interceptors [( auth/login auth/db ) ]}}]
+      :interceptors [(auth/login auth/db)]}}]
    ;; ["/token-auth"
    ;;  {:interceptors [( auth/token-auth-middleware auth/auth-middleware )]
    ;;   :get        (fn [_] {:status 200 :body {:message "Token auth succeeded!"}})}]

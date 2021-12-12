@@ -5,6 +5,7 @@
    [app.system :as system]
    [clj-http.client :as client]
    [app.core :as core]
+   [app.auth :as auth]
    [app.router :as rt]
    [io.pedestal.http.route :as route]
    [com.stuartsierra.component :as component]))
@@ -20,6 +21,7 @@
   []
   (alter-var-root #'system component/stop-system)
   :stopped)
+
 (defn login-req []
   (let [j (json/write-str {:username "user1" :password "kissa14"})
         o {:headers {"X-Api-Version" "2"}
@@ -49,12 +51,16 @@
 
 (defn get-req []
   (let [r (client/get "http://localhost:8890/hero")]
-    (print (:status r)))
-  )
+    (print (:status r))))
 
-(replt/refresh)
-(stop)
-(start)
-(login-req)
+(defn refresh []
 
+  (replt/refresh))
+
+;; (print "testing")
+;; (print (refresh))
+
+;; (stop)
+;; (start)
+;; (login-req)
 ;; (get-req)
