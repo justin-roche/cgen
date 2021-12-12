@@ -3,8 +3,7 @@
             [io.pedestal.http :as server]
             [reitit.pedestal :as pedestal]
             [reitit.http :as http]
-            [app.router :as r]
-            [reitit.ring :as ring]))
+            [app.router :as r]))
 
 (defrecord Server [service-map
                    router
@@ -12,17 +11,13 @@
 
   component/Lifecycle
   (start [this]
-    (println "got routes...")
-    (clojure.pprint/pprint (:routes router))
-    (println "got sm...")
-    (clojure.pprint/pprint service-map)
     (if service
       this
       (-> service-map
           (server/default-interceptors)
           (pedestal/replace-last-interceptor
            (pedestal/routing-interceptor
-            (http/router (:routes router ) r/route-data)))
+            (http/router (:routes router) r/route-data)))
           (server/dev-interceptors)
           (server/create-server)
           (server/start))))

@@ -31,7 +31,6 @@
   (let [cred (mgc/create cred-user cred-db cred-password)
         conn (mg/connect-with-credentials host port cred)
         db   (mg/get-db conn db)]
-    (println db)
     {:db db :conn conn}))
 
 (defrecord Database [db-config db]

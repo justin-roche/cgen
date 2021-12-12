@@ -2,6 +2,7 @@
   (:require
    [io.pedestal.http.route :as route]
    [app.hero :as hero]
+   [app.auth :as auth]
    [com.stuartsierra.component :as component]
    [io.pedestal.interceptor :as i]
    [reitit.http.coercion :as coercion]
@@ -13,7 +14,6 @@
    [reitit.http.interceptors.muuntaja :as muuntaja]
    [io.pedestal.http.body-params :as bp]))
 
-
 (def body-parser (bp/body-params (bp/default-parser-map)))
 
 (defn get-db-interceptor [db]
@@ -22,28 +22,39 @@
      (update context :request assoc :db db))})
 
 (def route-data {:data {:coercion reitit.coercion.malli/coercion
-           :muuntaja m/instance
-           :interceptors [(muuntaja/format-request-interceptor)
+                        :muuntaja m/instance
+                        :interceptors [(muuntaja/format-request-interceptor)
 ;; query-params & form-params
-                          (parameters/parameters-interceptor)
+                                       (parameters/parameters-interceptor)
                              ;; content-negotiation
-                          (muuntaja/format-negotiate-interceptor)
+                                       (muuntaja/format-negotiate-interceptor)
                              ;; encoding response body
-                          (muuntaja/format-response-interceptor)
+                                       (muuntaja/format-response-interceptor)
                              ;; exception handling
-                          (exception/exception-interceptor)
+                                       (exception/exception-interceptor)
                              ;; decoding request body
-                          (muuntaja/format-request-interceptor)
+                                       (muuntaja/format-request-interceptor)
                              ;; coercing response bodys
-                          (coercion/coerce-response-interceptor)
+                                       (coercion/coerce-response-interceptor)
                              ;; coercing request parameters
-                          (coercion/coerce-request-interceptor)
+                                       (coercion/coerce-request-interceptor)
                              ;; multipart
-                          (multipart/multipart-interceptor)]}} )
+                                       (multipart/multipart-interceptor)]}})
 
 (defn make-routes [db]
   [""
    {:interceptors [(get-db-interceptor db)]}
+   ["/login"
+    {:post
+     {:handler (fn [req]
+                 {:status 200
+                  :body
+                  {:message "basic auth succeeded!"
+                   :user    (-> req :identity)}})
+      :interceptors [( auth/login auth/db ) ]}}]
+   ;; ["/token-auth"
+   ;;  {:interceptors [( auth/token-auth-middleware auth/auth-middleware )]
+   ;;   :get        (fn [_] {:status 200 :body {:message "Token auth succeeded!"}})}]
    ["/hero"
 
     {:get {:handler hero/get-heroes}
@@ -59,19 +70,16 @@
     (if routes
       this
       (let [routes (make-routes db)]
-        (clojure.pprint/pprint routes)
         (assoc this :routes routes))))
 
   (stop [this]
     (do
-      (println  "removing routes")
-      (clojure.pprint/pprint (:routes this))
       (assoc this :routes nil))))
 
 (defn new-router
   []
   (map->Router {}))
 
-(defn t-hero []
-  ;; (route/try-routing-for routes :prefix-tree "/hero" :post)
-  )
+;; (defn t-login []
+;;   (route/try-routing-for routes :prefix-tree "/hero" :post)
+;;   )

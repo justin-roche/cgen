@@ -8,6 +8,5 @@
 (defn main
   []
   (component/start-system system)
-   ;; (route/try-routing-for routes/routes :prefix-tree "/greet" :get)
   )
 

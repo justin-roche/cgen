@@ -6,7 +6,6 @@
             [io.pedestal.http.route :as route]))
 
 (defn get-heroes [request]
-  (clojure.pprint/pprint request)
   {:status 200 :body "Hello, world!"})
 
 (defn get-hero [request]
@@ -14,13 +13,11 @@
 
 (defn add-heroes [ctx]
   (clojure.pprint/pprint ctx)
-  (clojure.pprint/pprint (:parameters ctx))
+
   {:status 200})
 
 (defn add-hero [{:keys [json-params db]}]
-  (clojure.pprint/pprint db)
   {:status 200})
-
 
 (defn get-hero [{{:keys [hero]} :path-params
                  {:keys [extended]} :query-params}]
