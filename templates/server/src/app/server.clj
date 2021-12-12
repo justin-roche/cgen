@@ -1,15 +1,17 @@
 (ns app.server
   (:require [com.stuartsierra.component :as component]
             [io.pedestal.interceptor :as i]
+            [io.pedestal.http.body-params :as bp]
             [io.pedestal.http :as http]))
-
 
 (defn get-db-interceptor [db]
   (i/interceptor {:name :database-interceptor
-    :leave nil
-    :enter
-    (fn [context]
-      (update context :request assoc :database db))}))
+                  :leave nil
+                  :enter
+                  (fn [context]
+                    (update context :request assoc :database db))}))
+
+(def body-parser (bp/body-params (bp/default-parser-map)))
 
 (defrecord Server [service-map
                    db
@@ -20,8 +22,9 @@
     (if service
       this
       (-> service-map
-          (http/default-interceptors)
-          (update ::http/interceptors conj (get-db-interceptor db))
+          ;; (http/default-interceptors)
+
+          ;; (update ::http/interceptors conj (bp/body-params (bp/default-parser-map)) )
           (#(http/start (http/create-server %)))
           ;; ((partial assoc this :service))
           )))
@@ -35,3 +38,6 @@
   (map->Server {}))
 
 
+(defn t []
+
+  )

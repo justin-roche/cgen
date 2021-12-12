@@ -13,6 +13,7 @@
    :service-map
    {:env          env
     ::http/routes routes/routes
+    ;; ::http/router :linear-search
     ::http/type   :jetty
     ::http/port   8890
     ::http/join?  false}
