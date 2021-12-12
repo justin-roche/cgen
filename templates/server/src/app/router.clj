@@ -1,7 +1,7 @@
 (ns app.router
   (:require
    [io.pedestal.http.route :as route]
-   ;; [app.hero :as hero]
+   [app.hero :as hero]
    [com.stuartsierra.component :as component]
    [io.pedestal.interceptor :as i]
    [io.pedestal.http.body-params :as bp]))
@@ -28,8 +28,8 @@
                          ["/"
                           ^:interceptors [body-parser (get-db-interceptor db)]
                           ["/hero"
-                           {:get `get-heroes
-                            :post `add-heroes
+                           {:get `hero/get-heroes
+                            :post `hero/add-heroes
                             }]]]]))
 
 (defrecord Router [db service-map routes]
