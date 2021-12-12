@@ -12,6 +12,8 @@
                  [io.pedestal/pedestal.log         "0.5.9"] ;; Logging and runtime metrics
                  [io.pedestal/pedestal.interceptor "0.5.9"] ;; The Interceptor chain and the Interceptor API
                  [io.pedestal/pedestal.route       "0.5.9"] ;; Efficient routing algorithms and data structures
+                 [metosin/reitit "0.5.15"]
+                 [metosin/reitit-pedestal "0.5.15"]
                  [io.aviso/logging "0.2.0"]
                  [com.novemberain/monger "3.1.0"]
                  [org.slf4j/slf4j-simple       "1.7.28"]

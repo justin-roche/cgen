@@ -12,10 +12,10 @@
   (component/system-map
    :service-map
    {:env          env
-    ;; ::http/router :linear-search
     ::http/type   :jetty
     ::http/port   8890
-    ::http/join?  false}
+    ::http/join?  false
+    ::http/routes  []}
    :db-config
    {:env          env
     :port   27017

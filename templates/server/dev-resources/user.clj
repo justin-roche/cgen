@@ -24,10 +24,10 @@
 
 
 ;; (rt/new-router)
- (let [router  (component/using (rt/new-router) [:db {} :service-map {}])]
-  (component/start router)
-  (component/stop router)
-    ;; (clojure.pprint/pprint router)
-  )
+ ;; (let [router  (component/using (rt/new-router) [:db {} :service-map {}])]
+ ;;  (component/start router)
+ ;;  (component/stop router)
+ ;;    ;; (clojure.pprint/pprint router)
+ ;;  )
 
 

@@ -4,33 +4,53 @@
    [app.hero :as hero]
    [com.stuartsierra.component :as component]
    [io.pedestal.interceptor :as i]
+   [reitit.http.coercion :as coercion]
+   [reitit.http.interceptors.parameters :as parameters]
+   [reitit.http.interceptors.exception :as exception]
+   [reitit.http.interceptors.multipart :as multipart]
+   [muuntaja.core :as m]
+   [reitit.coercion.malli]
+   [reitit.http.interceptors.muuntaja :as muuntaja]
    [io.pedestal.http.body-params :as bp]))
 
-(defn get-heroes [request]
-  {:status 200 :body "Hello, world!"})
-
-(defn add-heroes [{:keys [json-params db]}]
-  (clojure.pprint/pprint json-params)
-  {:status 200})
 
 (def body-parser (bp/body-params (bp/default-parser-map)))
 
 (defn get-db-interceptor [db]
-  (i/interceptor {:name :database-interceptor
-                  :leave nil
-                  :enter
-                  (fn [context]
-                    (update context :request assoc :db db))}))
+  {:enter
+   (fn [context]
+     (update context :request assoc :db db))})
+
+(def route-data {:data {:coercion reitit.coercion.malli/coercion
+           :muuntaja m/instance
+           :interceptors [(muuntaja/format-request-interceptor)
+;; query-params & form-params
+                          (parameters/parameters-interceptor)
+                             ;; content-negotiation
+                          (muuntaja/format-negotiate-interceptor)
+                             ;; encoding response body
+                          (muuntaja/format-response-interceptor)
+                             ;; exception handling
+                          (exception/exception-interceptor)
+                             ;; decoding request body
+                          (muuntaja/format-request-interceptor)
+                             ;; coercing response bodys
+                          (coercion/coerce-response-interceptor)
+                             ;; coercing request parameters
+                          (coercion/coerce-request-interceptor)
+                             ;; multipart
+                          (multipart/multipart-interceptor)]}} )
 
 (defn make-routes [db]
-  (println  "making routes")
-  (route/expand-routes [[:app :http
-                         ["/"
-                          ^:interceptors [body-parser (get-db-interceptor db)]
-                          ["/hero"
-                           {:get `hero/get-heroes
-                            :post `hero/add-heroes
-                            }]]]]))
+  [""
+   {:interceptors [(get-db-interceptor db)]}
+   ["/hero"
+
+    {:get {:handler hero/get-heroes}
+     :post {:handler hero/add-heroes
+            ;; :coercion m/coercion
+            :parameters {:body [:map
+                                [:a string?]]}}}]])
 
 (defrecord Router [db service-map routes]
 
