@@ -3,7 +3,7 @@
             [app.db :as db]
             [io.pedestal.http :as http]
             [app.server :as server]
-            [app.routes :as routes]))
+            [app.router :as rt]))
 
 (def env 'dev')
 
@@ -12,7 +12,6 @@
   (component/system-map
    :service-map
    {:env          env
-    ::http/routes routes/routes
     ;; ::http/router :linear-search
     ::http/type   :jetty
     ::http/port   8890
@@ -27,7 +26,10 @@
     :cred-password "rootpassword"}
    :db
    (component/using (db/new-database) [:db-config])
+   :router
+   (component/using (rt/new-router) [:db :service-map])
    :pedestal
    (component/using (server/new-server) [:service-map
-                                         :db])))
+                                         :router])
+   ))
 

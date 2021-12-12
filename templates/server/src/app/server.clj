@@ -1,33 +1,28 @@
 (ns app.server
   (:require [com.stuartsierra.component :as component]
-            [io.pedestal.interceptor :as i]
-            [io.pedestal.http.body-params :as bp]
+            [io.pedestal.http.route :as route]
             [io.pedestal.http :as http]))
 
-(defn get-db-interceptor [db]
-  (i/interceptor {:name :database-interceptor
-                  :leave nil
-                  :enter
-                  (fn [context]
-                    (update context :request assoc :database db))}))
 
-(def body-parser (bp/body-params (bp/default-parser-map)))
+
+
 
 (defrecord Server [service-map
-                   db
+                   router
                    service]
 
   component/Lifecycle
   (start [this]
+    (println "got routes...")
+    (clojure.pprint/pprint (:routes router))
+
+    (println "got sm...")
+    (clojure.pprint/pprint service-map)
     (if service
       this
-      (-> service-map
-          ;; (http/default-interceptors)
-
-          ;; (update ::http/interceptors conj (bp/body-params (bp/default-parser-map)) )
-          (#(http/start (http/create-server %)))
-          ;; ((partial assoc this :service))
-          )))
+      (-> (merge service-map {::http/routes (:routes router)})
+          (#(http/start (http/create-server %))))))
+  ;; (assoc this :service nil)
 
   (stop [this]
     (http/stop service)
@@ -37,7 +32,8 @@
   []
   (map->Server {}))
 
-
-(defn t []
-
-  )
+;; (let [routes  ]
+  ;; (component/start router)
+  ;; (component/stop router)
+    ;; (clojure.pprint/pprint routes)
+  ;; )
