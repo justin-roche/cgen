@@ -11,16 +11,6 @@
    [io.pedestal.http.route :as route]
    [com.stuartsierra.component :as component]))
 
-;; (defn start
-;;   [s]
-;;   (component/start-system s)
-;;   :started)
-
-;; (defn stop
-;;   []
-;;   (component/stop-system s)
-;;   :stopped)
-
 (defn login-req []
   (let [j (json/write-str {:username "user1" :password "kissa13"})
         o {:headers {"X-Api-Version" "2"}
@@ -56,9 +46,11 @@
   (let [s (system/new-system)
         s1 (component/start-system s)]
     (login-req)
-    (component/stop-system s1)
-    ))
+    (component/stop-system s1)))
 
 (rp/refresh :after 'app.user/run-test)
+
+
+
 
 

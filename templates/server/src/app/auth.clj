@@ -6,6 +6,9 @@
             [io.pedestal.interceptor.chain :as interceptor.chain]
             [io.pedestal.interceptor.error :refer [error-dispatch]]
             [io.pedestal.interceptor :as i]
+            [malli.provider :as mp]
+            [malli.core :as m]
+            [malli.error :as me]
             [buddy.hashers :as buddy-hashers]
             [buddy.sign.jwt :as jwt]))
 
@@ -44,6 +47,13 @@
     :password (buddy-hashers/encrypt "koira12")
     :roles    ["user"]}})
 
+(def s-request
+  (m/schema [:map
+             [:token string?]
+             [:body-params [:map
+                            [:username string?]
+                            [:password string?]]]]))
+
 (defn login [db]
   {:enter
    (fn [r]
@@ -52,7 +62,7 @@
            user (get db username)]
        (println (str "auth username is b: " username " " password))
        (if (and user (buddy-hashers/check password (:password user)))
-         (let [r2 (assoc-in r [:request :token ] (create-token user))]
+         (let [r2 (assoc-in r [:request :token] (create-token user))]
            r2)
 
          (throw

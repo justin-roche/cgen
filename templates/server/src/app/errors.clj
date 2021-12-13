@@ -1,6 +1,5 @@
 (ns app.errors
   (:require
-
    [clojure.data.json :as json]
    [com.stuartsierra.component :as component]))
 

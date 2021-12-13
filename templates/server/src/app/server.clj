@@ -2,8 +2,11 @@
   (:require [com.stuartsierra.component :as component]
             [io.pedestal.http :as server]
             [reitit.pedestal :as pedestal]
+            [malli.provider :as mp]
+            [malli.core :as m]
             [reitit.http :as http]
             [app.router :as r]))
+
 
 (defrecord Server [service-map
                    router
@@ -19,7 +22,8 @@
         (server/dev-interceptors)
         (server/create-server)
         (server/start)
-        ((partial assoc this :service))))
+        ((partial assoc this :service)))
+    )
 
   (stop [this]
     (print "disconnect server")
@@ -31,8 +35,4 @@
   []
   (map->Server {}))
 
-;; (let [routes  ]
-  ;; (component/start router)
-  ;; (component/stop router)
-    ;; (clojure.pprint/pprint routes)
-  ;; )
+
