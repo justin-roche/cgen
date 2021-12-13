@@ -2,6 +2,7 @@
   (:require
    [clojure.data.json :as json]
    [clojure.tools.namespace.repl :as replt]
+   [io.pedestal.interceptor :as interceptor]
    [app.system :as system]
    [clj-http.client :as client]
    [app.core :as core]

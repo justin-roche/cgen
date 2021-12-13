@@ -48,15 +48,17 @@
                    (get-db-interceptor db)]}
    ["/login"
     {:post
-     {:handler (fn [req]
+     {:handler (fn [ctx]
+                 (println "...")
+                 (println (type ctx) )
+                 (println "...")
                  {:status 200
                   :body
-                  {:message "basic auth succeeded!"
-                   :user    (-> req :identity)}})
+                  {:message "Authorization success"
+                   :token (select-keys ctx [:token])
+                   ;; :user    (-> ctx :identity)
+                   }})
       :interceptors [(auth/login auth/db)]}}]
-   ;; ["/token-auth"
-   ;;  {:interceptors [( auth/token-auth-middleware auth/auth-middleware )]
-   ;;   :get        (fn [_] {:status 200 :body {:message "Token auth succeeded!"}})}]
    ["/hero"
 
     {:get {:handler hero/get-heroes}
