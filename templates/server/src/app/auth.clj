@@ -50,7 +50,7 @@
      (let [username (get-in r [:request :body-params :username])
            password (get-in r [:request :body-params :password])
            user (get db username)]
-       (println (str "checking auth username" username " " password))
+       (println (str "auth username is b: " username " " password))
        (if (and user (buddy-hashers/check password (:password user)))
          (let [r2 (assoc-in r [:request :token ] (create-token user))]
            r2)

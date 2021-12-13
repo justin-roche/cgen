@@ -11,21 +11,21 @@
 
   component/Lifecycle
   (start [this]
-    (if service
-      this
-      (-> service-map
-          (server/default-interceptors)
-          (pedestal/replace-last-interceptor
-           (pedestal/routing-interceptor
-            (http/router (:routes router) r/route-data)))
-          (server/dev-interceptors)
-          (server/create-server)
-          (server/start))))
-  ;; (assoc this :service nil)
+    (-> service-map
+        (server/default-interceptors)
+        (pedestal/replace-last-interceptor
+         (pedestal/routing-interceptor
+          (http/router (:routes router) r/route-data)))
+        (server/dev-interceptors)
+        (server/create-server)
+        (server/start)
+        ((partial assoc this :service))))
 
   (stop [this]
-    ;; (/stop service)
-    (assoc this :service nil)))
+    (print "disconnect server")
+    (do
+      (server/stop (:service this))
+      (assoc this :service nil))))
 
 (defn new-server
   []

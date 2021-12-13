@@ -25,9 +25,10 @@
   (mc/update db coll {} u {:multi true}))
 
 (defn db-disconnect [conn]
+  (print "disconnecting: db")
   mg/disconnect conn)
 
-(defn db-connect [{:keys [ cred-db cred-user cred-password host port db ]}]
+(defn db-connect [{:keys [cred-db cred-user cred-password host port db]}]
   (let [cred (mgc/create cred-user cred-db cred-password)
         conn (mg/connect-with-credentials host port cred)
         db   (mg/get-db conn db)]
@@ -45,9 +46,10 @@
                                      (merge this db-and-conn))))))
 
   (stop [this]
-    (db-disconnect (:conn this))
-    (assoc this :conn nil)
-    (assoc this :db nil)))
+    (do
+      (db-disconnect (:conn this))
+      (assoc this :conn nil)
+      (assoc this :db nil))))
 
 (defn new-database
   []

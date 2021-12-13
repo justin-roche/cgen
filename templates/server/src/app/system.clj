@@ -9,6 +9,7 @@
 
 (defn new-system
   []
+  (println  "starting system")
   (component/system-map
    :service-map
    {:env          env
@@ -30,6 +31,5 @@
    (component/using (rt/new-router) [:db :service-map])
    :pedestal
    (component/using (server/new-server) [:service-map
-                                         :router])
-   ))
+                                         :router])))
 

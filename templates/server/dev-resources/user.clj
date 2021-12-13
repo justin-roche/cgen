@@ -1,30 +1,28 @@
-(ns user
+(ns app.user
   (:require
-   [clojure.data.json :as json]
-   [clojure.tools.namespace.repl :as replt]
-   [io.pedestal.interceptor :as interceptor]
-   [app.system :as system]
-   [clj-http.client :as client]
+   [clojure.tools.namespace.repl :as rp]
    [app.core :as core]
    [app.auth :as auth]
    [app.router :as rt]
+   [app.system :as system]
+   [clojure.data.json :as json]
+   [io.pedestal.interceptor :as interceptor]
+   [clj-http.client :as client]
    [io.pedestal.http.route :as route]
    [com.stuartsierra.component :as component]))
 
-(defonce system (system/new-system))
+;; (defn start
+;;   [s]
+;;   (component/start-system s)
+;;   :started)
 
-(defn start
-  []
-  (alter-var-root #'system component/start-system)
-  :started)
-
-(defn stop
-  []
-  (alter-var-root #'system component/stop-system)
-  :stopped)
+;; (defn stop
+;;   []
+;;   (component/stop-system s)
+;;   :stopped)
 
 (defn login-req []
-  (let [j (json/write-str {:username "user1" :password "kissa14"})
+  (let [j (json/write-str {:username "user1" :password "kissa13"})
         o {:headers {"X-Api-Version" "2"}
            :body j
            :content-type :application/json
@@ -32,7 +30,7 @@
            :connection-timeout 1000
            :accept :json}
         r (client/post "http://localhost:8890/login" o)]
-    (print "........\n")
+    (print "........\n\n")
     (print (:status r))
     (print (:body r))
     (print "\n........\n")))
@@ -54,14 +52,13 @@
   (let [r (client/get "http://localhost:8890/hero")]
     (print (:status r))))
 
-(defn refresh []
+(defn run-test []
+  (let [s (system/new-system)
+        s1 (component/start-system s)]
+    (login-req)
+    (component/stop-system s1)
+    ))
 
-  (replt/refresh))
+(rp/refresh :after 'app.user/run-test)
 
-;; (print "testing")
-;; (print (refresh))
 
-;; (stop)
-;; (start)
-;; (login-req)
-;; (get-req)
