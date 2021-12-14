@@ -49,21 +49,27 @@
    ["/login"
     {:post
      {:handler (fn [ctx]
-                 (println "...")
-                 (println (type ctx) )
-                 (println "...")
                  {:status 200
                   :body
                   {:message "Authorization success"
                    :token (select-keys ctx [:token])
                    ;; :user    (-> ctx :identity)
                    }})
+      :parameters {:body [:map
+                          [:password string?]
+                          [:username string?]]}
       :interceptors [(auth/login auth/db)]}}]
+   ["/authorized"
+    {:get
+     {:handler (fn [ctx]
+                 {:status 200
+                  :body
+                  {:message "OK"}})
+      :interceptors [(auth/verify-token auth/db)]}}]
    ["/hero"
 
     {:get {:handler hero/get-heroes}
      :post {:handler hero/add-heroes
-            ;; :coercion m/coercion
             :parameters {:body [:map
                                 [:a string?]]}}}]])
 

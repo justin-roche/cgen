@@ -8,7 +8,6 @@
             [io.pedestal.interceptor :as i]
             [malli.provider :as mp]
             [malli.core :as m]
-            ;; [malli.error :as me]
             [app.errors :as e]
             [buddy.hashers :as buddy-hashers]
             [buddy.sign.jwt :as jwt]))
@@ -29,14 +28,23 @@
                                  (java.time.Instant/now) valid-seconds)))]
     (jwt/sign payload private-key {:alg :hs512})))
 
-;; (defn verify-token
-;;   "Creates a signed jwt-token with user data as payload.
-;;   `valid-seconds` sets the expiration span."
-;;   [req] ;; 2 hours
-;;   (let [payload (-> req
-;;                     (select-keys [:id :roles])
-;;                     )]
-;;     (jwt/unsign payload private-key {:alg :hs512})))
+(def s-token-request
+  (m/schema [:map
+             [:request  [:map [:headers [:map ["authorization" string?]]]]]]))
+
+(defn verify-token [db]
+  {:enter
+   (fn [r]
+     (e/v s-token-request r)
+     (try (let [token (get-in r [:request :headers "authorization"])
+                data (jwt/unsign token private-key {:alg :hs512})]
+            (clojure.pprint/pprint data)
+            (update-in r [:user] data))
+          (catch Exception err
+            (do
+              (clojure.pprint/pprint "ERROR***\n")
+
+              (e/throw 401)))))})
 
 (def db
   {"user1"
@@ -50,10 +58,9 @@
 
 (def s-request
   (m/schema [:map
-             [:token string?]
-             [:body-params [:map
-                            [:username string?]
-                            [:password string?]]]]))
+             [:request  [:map [:body-params [:map
+                                             [:username string?]
+                                             [:password string?]]]]]]))
 
 (defn login [db]
   {:enter
@@ -62,12 +69,10 @@
      (let [username (get-in r [:request :body-params :username])
            password (get-in r [:request :body-params :password])
            user (get db username)]
-
-       (println (str "auth username is b: " username " " password))
+       (println (str "auth data: " username " " password))
        (if (and user (buddy-hashers/check password (:password user)))
          (let [r2 (assoc-in r [:request :token] (create-token user))]
            r2)
-
          (throw
           (ex-info "unauthorized" {:status 401})))))})
 

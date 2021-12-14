@@ -11,15 +11,19 @@
 (defn error-interceptor
   []
   {:error (fn [ctx e]
-            (let [status (:status (ex-data e))
-                  message (get error-messages status)
-                  body (json/write-str {:errors [{:message message}]})]
-              (update-in ctx [:response] assoc :status status  :body body)))})
+            (println "error handler")
+            (let [;;
+                  status  (or (:status (ex-data e)) 501)
+                  ;; body (json/write-str {:errors [{:message message}]}
+                  ;; )
+                  ]
+              (update-in ctx [:response] assoc :status status :message (get error-messages status))))})
 
 (defn v [schema input]
-
   (let [r (m/validate schema input)]
     (if (not r)
       (println (str "\n***Validation Error***\n" (me/humanize (m/explain schema input))));   (do
       nil)))
 
+(defn throw [status]
+  (throw (ex-info "problem" {:status status})))
