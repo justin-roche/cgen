@@ -34,9 +34,10 @@
            :connection-timeout 1000
            :accept :json}
         r (client/post "http://localhost:8890/hero" o)]
-    (print "........\n")
-    (print (:status r))
-    (print "\n........\n")))
+    ;; (print "........\n")
+    ;; (print (:status r))
+    ;; (print "\n........\n")
+    ))
 
 (defn get-req []
   (let [r (client/get "http://localhost:8890/hero")]
@@ -45,7 +46,11 @@
 (defn run-test []
   (let [s (system/new-system)
         s1 (component/start-system s)]
-    (login-req)
+    (try (login-req)
+         (catch Exception e (do
+                              (println (str "caught exception: " (.toString e)))
+                              (component/stop-system s1))))
+
     (component/stop-system s1)))
 
 (rp/refresh :after 'app.user/run-test)

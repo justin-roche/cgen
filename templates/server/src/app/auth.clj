@@ -8,7 +8,8 @@
             [io.pedestal.interceptor :as i]
             [malli.provider :as mp]
             [malli.core :as m]
-            [malli.error :as me]
+            ;; [malli.error :as me]
+            [app.errors :as e]
             [buddy.hashers :as buddy-hashers]
             [buddy.sign.jwt :as jwt]))
 
@@ -57,9 +58,11 @@
 (defn login [db]
   {:enter
    (fn [r]
+     (e/v s-request r)
      (let [username (get-in r [:request :body-params :username])
            password (get-in r [:request :body-params :password])
            user (get db username)]
+
        (println (str "auth username is b: " username " " password))
        (if (and user (buddy-hashers/check password (:password user)))
          (let [r2 (assoc-in r [:request :token] (create-token user))]
