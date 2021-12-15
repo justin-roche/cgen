@@ -52,9 +52,7 @@
                  {:status 200
                   :body
                   {:message "Authorization success"
-                   :token (select-keys ctx [:token])
-                   ;; :user    (-> ctx :identity)
-                   }})
+                   :token (select-keys ctx [:token])}})
       :parameters {:body [:map
                           [:password string?]
                           [:username string?]]}
@@ -62,9 +60,13 @@
    ["/authorized"
     {:get
      {:handler (fn [ctx]
-                 (println "handler")
                  {:status 200})
-      :interceptors [(auth/verify-token auth/db)]}}]
+      :interceptors [(auth/verify-token)]}}]
+   ["/admin"
+    {:get
+     {:handler (fn [ctx]
+                 {:status 200})
+      :interceptors [(auth/verify-token) (auth/role ["admin"])]}}]
    ["/hero"
 
     {:get {:handler hero/get-heroes}

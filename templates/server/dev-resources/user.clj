@@ -19,6 +19,12 @@
 
 (def base "http://localhost:8890/")
 
+(defn admin-req []
+  (println "sending admin get req")
+  (let [o (merge request-options {:headers {"Authorization" valid-token}})
+        r (client/get "http://localhost:8890/admin" o)]
+    (println r)))
+
 (defn valid-token-req []
   (println "sending valid req")
   (let [o (merge request-options {:headers {"Authorization" valid-token}})
@@ -63,7 +69,8 @@
         s1 (component/start-system s)]
     (try
       ;; (post-req)
-      (valid-token-req)
+      ;; (valid-token-req)
+      (admin-req)
       ;; (invalid-token-req)
       ;; (login-req)
       (catch Exception e (component/stop-system s1)))
@@ -72,3 +79,4 @@
 
 (rp/refresh :after 'app.user/run-test)
 
+;; (every? #(contains? ["admin"] %) ["admin"])

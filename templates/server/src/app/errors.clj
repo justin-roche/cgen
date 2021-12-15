@@ -1,6 +1,7 @@
 (ns app.errors
   (:require
    [malli.provider :as mp]
+   [io.pedestal.log :as pl]
    [malli.core :as m]
    [malli.error :as me]
    [clojure.data.json :as json]
@@ -21,6 +22,9 @@
 (defn update-res [ctx v]
   (update-in ctx [:response] #(merge % v)))
 
+(defn handle-unknown-error [e]
+  (pl/error "unknown error" e))
+
 (defn error-interceptor []
   {:error (fn [ctx e]
             ;; (pl/info :error-interceptor (get-in (ex-data e) :interceptor))
@@ -29,7 +33,7 @@
                   cause (:cause (ex-data e))
                   m (case origin
                       :app.auth/verify-token {:status 401}
-                      nil {:status 501})]
+                      (handle-unknown-error e))]
               ctx))})
 
 (defn v [schema input]

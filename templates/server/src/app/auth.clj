@@ -10,6 +10,7 @@
             [malli.provider :as mp]
             [malli.core :as m]
             [app.errors :as e]
+            [clojure.set :refer [subset?]]
             [buddy.hashers :as buddy-hashers]
             [buddy.sign.jwt :as jwt]))
 
@@ -50,14 +51,17 @@
 (defn update-res [ctx v]
   (update-in ctx [:response] #(merge % v)))
 
-(defn verify-token [db]
+(defn update-req [ctx v]
+  (update-in ctx [:request] #(merge % v)))
+
+(defn verify-token []
   {:name ::verify-token
    :enter
    (fn [ctx]
      (let [token (get-in ctx [:request :headers "authorization"])
            user-data (unsign-token token)]
        (pl/info "token user data" user-data)
-       (update-res ctx {:user user-data})))})
+       (update-req ctx {:user user-data})))})
 
 (def s-request
   (m/schema [:map
@@ -78,4 +82,21 @@
            r2)
          (throw
           (ex-info "unauthorized" {:status 401})))))})
+
+(defn get-user-roles [ctx]
+  (get-in ctx [:request :user :roles]))
+
+(defn has-roles? [user-roles roles]
+  subset? (set roles) (set user-roles))
+
+(defn role [roles]
+  {:name ::verify-role
+   :enter
+   (fn [ctx]
+     (let [user-roles (get-user-roles ctx)]
+       (pl/info "token user roles" user-roles)
+       (pl/info "required roles" roles)
+       (if (has-roles? user-roles roles)
+         ctx
+         (throw (new Exception)))))})
 
