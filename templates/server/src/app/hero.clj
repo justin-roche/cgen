@@ -12,7 +12,6 @@
   {:status 200 :body "Hello, world!"})
 
 (defn add-heroes [ctx]
-  ;; (clojure.pprint/pprint ctx)
 
   {:status 200})
 

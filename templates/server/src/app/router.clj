@@ -62,9 +62,8 @@
    ["/authorized"
     {:get
      {:handler (fn [ctx]
-                 {:status 200
-                  :body
-                  {:message "OK"}})
+                 (println "handler")
+                 {:status 200})
       :interceptors [(auth/verify-token auth/db)]}}]
    ["/hero"
 

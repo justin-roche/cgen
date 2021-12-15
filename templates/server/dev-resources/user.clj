@@ -7,7 +7,7 @@
    [com.stuartsierra.component :as component]))
 
 (def valid-token
-  "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwicm9sZXMiOlsiYWRtaW4iLCJ1c2VyIl0sImV4cCI6MTYzOTUxMzUzOH0.IvcM3ocMrrjbIp_ffnic7axpQSV7W_BM4ngY1oYSGBTgXWFZDMgdaCYBoqRrY7NkRE1cAUFXj26Xy0KnSplDXQ")
+  "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwicm9sZXMiOlsiYWRtaW4iLCJ1c2VyIl0sImV4cCI6MTY0MDM2MjQ4MH0.oxVIVYOqmsSLXSrg9Xbv5WMCGi86QtiPvZfOoYC6CWAzs-WOCrwd-7XbpMSU6URN4KFHBHjvVDAKx_T4ehnlwA")
 
 (def invalid-token
   "fyJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwicm9sZXMiOlsiYWRtaW4iLCJ1c2VyIl0sImV4cCI6MTYzOTUxMzUzOH0.IvcM3ocMrrjbIp_ffnic7axpQSV7W_BM4ngY1oYSGBTgXWFZDMgdaCYBoqRrY7NkRE1cAUFXj26Xy0KnSplDXQ")
@@ -16,18 +16,20 @@
                        :socket-timeout 1000
                        :connection-timeout 1000
                        :accept :json})
+
 (def base "http://localhost:8890/")
 
 (defn valid-token-req []
-  (println "valid req")
+  (println "sending valid req")
   (let [o (merge request-options {:headers {"Authorization" valid-token}})
         r (client/get "http://localhost:8890/authorized" o)]
-    (print (:status r))))
+    (println (:status r))))
 
 (defn invalid-token-req []
-  (println "invalid req")
+  (println "sending invalid req")
   (let [o  (merge request-options {:headers {"X-Api-Version" "2" "Authorization" invalid-token}})
         r (client/get "http://localhost:8890/authorized" o)]
+    (println "wow")
     (println (:status r))))
 
 (defn login-req []
@@ -35,7 +37,7 @@
         o (-> request-options
               (merge {:content-type :application/json :body j}))
         r (client/post "http://localhost:8890/login" o)]
-    (println (:status r))))
+    (println (:body r))))
 
 (defn post-req []
   (let [j (json/write-str {:a "b"})
@@ -60,11 +62,11 @@
   (let [s (system/new-system)
         s1 (component/start-system s)]
     (try
-      (post-req)
-      ;; (valid-token-req)
-      (catch Exception e (do
-                           (clojure.pprint/pprint (str "caught exception: " (.toString e)))
-                           (component/stop-system s1))))
+      ;; (post-req)
+      (valid-token-req)
+      ;; (invalid-token-req)
+      ;; (login-req)
+      (catch Exception e (component/stop-system s1)))
 
     (component/stop-system s1)))
 
