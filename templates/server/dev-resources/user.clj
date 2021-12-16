@@ -12,6 +12,20 @@
   (t/run-tests 'app.app-tests)
   (println "refreshed"))
 
-(rp/refresh :after 'app.user/refreshed)
+(defn run-system []
+  (let [s (system/new-system)
+        s1 (component/start-system s)]
+    (try
+      (defonce sys s1)
+      ;; (let [result (test)]
+      ;;   (component/stop-system s1)
+      ;;   (println "\ntest result" result)
+      ;;   result)
+      (catch Exception e (component/stop-system s1)))))
+
+(try
+  (rp/refresh :after 'app.user/run-system)
+  (catch Exception e (clojure.pprint/pprint (str "caught exception: " (.toString e)))))
+
 
 

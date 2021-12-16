@@ -93,6 +93,3 @@
   []
   (map->Router {}))
 
-;; (defn t-login []
-;;   (route/try-routing-for routes :prefix-tree "/hero" :post)
-;;   )

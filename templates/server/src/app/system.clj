@@ -1,30 +1,31 @@
 (ns app.system
   (:require [com.stuartsierra.component :as component]
+            [environ.core :refer [env]]
             [app.db :as db]
             [io.pedestal.http :as http]
             [app.server :as server]
             [app.router :as rt]))
 
-(def env 'dev')
+(def env-mode 'dev')
 
 (defn new-system
   []
   (println  "starting system")
   (component/system-map
    :service-map
-   {:env          env
+   {:env          env-mode
     ::http/type   :jetty
     ::http/port   8890
     ::http/join?  false
     ::http/routes  []}
    :db-config
-   {:env          env
+   {:env          env-mode
     :port   27017
-    :host   "localhost"
-    :db "mongo-test"
-    :cred-user "root"
-    :cred-db "admin"
-    :cred-password "rootpassword"}
+    :host (env :db-host)
+    :db (env :db)
+    :cred-user (env :cred-user)
+    :cred-db (env :cred-db)
+    :cred-password (env :cred-password)}
    :db
    (component/using (db/new-database) [:db-config])
    :router
