@@ -37,6 +37,7 @@
                   cause (:cause (ex-data e))
                   m (case origin
                       :app.auth/verify-token {:status 401}
+                      :app.auth/verify-role {:status 401}
                       (handle-unknown-error e))]
               (update-res ctx m)))})
 

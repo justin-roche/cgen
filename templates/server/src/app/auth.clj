@@ -89,7 +89,8 @@
   (get-in ctx [:request :user :roles]))
 
 (defn has-roles? [user-roles roles]
-  subset? (set roles) (set user-roles))
+  (println "subset: " (subset? (set roles) (set user-roles)))
+  (subset? (set roles) (set user-roles)))
 
 (defn role [roles]
   {:name ::verify-role
@@ -102,5 +103,4 @@
          ctx
          (throw (new Exception)))))})
 
-
-
+(subset? (set ["admin"]) (set ["user"]))
