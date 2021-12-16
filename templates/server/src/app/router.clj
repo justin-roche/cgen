@@ -24,6 +24,7 @@
 
 (def route-data {:data {:coercion reitit.coercion.malli/coercion
                         :muuntaja m/instance
+
                         :interceptors [(muuntaja/format-request-interceptor)
 ;; query-params & form-params
                                        (parameters/parameters-interceptor)
@@ -44,7 +45,7 @@
 
 (defn make-routes [db]
   [""
-   {:interceptors [(errors/error-interceptor)
+   {:interceptors [errors/errors-handler
                    (get-db-interceptor db)]}
    ["/login"
     {:post
@@ -92,4 +93,3 @@
 (defn new-router
   []
   (map->Router {}))
-
