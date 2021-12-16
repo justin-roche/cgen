@@ -60,11 +60,13 @@
    ["/authorized"
     {:get
      {:handler (fn [ctx]
+                 (println "/authorize handler")
                  {:status 200})
       :interceptors [(auth/verify-token)]}}]
    ["/admin"
     {:get
      {:handler (fn [ctx]
+                 (println "route handler")
                  {:status 200})
       :interceptors [(auth/verify-token) (auth/role ["admin"])]}}]
    ["/hero"

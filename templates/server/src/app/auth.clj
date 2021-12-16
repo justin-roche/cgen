@@ -45,8 +45,10 @@
              [:request  [:map [:headers [:map ["authorization" string?]]]]]]))
 
 (defn unsign-token [token]
+  (pl/info "unsigning token:" token)
+  (println token)
   (try (jwt/unsign token private-key {:alg :hs512})
-       (catch Exception e (do (println "error...") (throw e)))))
+       (catch Exception e (do (pl/error "jwt error" (ex-data e)) (throw e)))))
 
 (defn update-res [ctx v]
   (update-in ctx [:response] #(merge % v)))
@@ -99,4 +101,6 @@
        (if (has-roles? user-roles roles)
          ctx
          (throw (new Exception)))))})
+
+
 
