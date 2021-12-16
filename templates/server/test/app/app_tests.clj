@@ -79,19 +79,9 @@
 (t/deftest invalid-token ()
   (t/is (= 401 (run-test invalid-token-req))))
 
-;; (t/deftest login ()
-  ;; (t/is (= 200 (run-test login-req))))
+(t/deftest login ()
+  (t/is (= 200 (run-test login-req))))
 
 (t/deftest admin ()
   (t/is (= 200 (run-test admin-req))))
-;; (t/deftest invalid-token ()
-;;   (let [s (system/new-system)
-;;         s1 (component/start-system s)]
-;;     (try
-;;       (let [result (invalid-token-req)]
-;;         ;; (println "r:" (:status result))
-;;         (t/is (= 401 result))
-;;         (component/stop-system s1))
-;;       (catch Exception e (do (println e) (component/stop-system s1))))))
-
 
