@@ -1,18 +1,12 @@
 (ns app.auth
-  (:require [buddy.auth :as buddy-auth]
-            [buddy.auth.backends :as buddy-auth-backends]
-            [buddy.auth.backends.httpbasic :as buddy-auth-backends-httpbasic]
-            [buddy.auth.middleware :as buddy-auth-middleware]
-            [io.pedestal.interceptor.chain :as interceptor.chain]
-            [io.pedestal.interceptor.error :refer [error-dispatch]]
-            [io.pedestal.interceptor :as i]
-            [io.pedestal.log :as pl]
-            [malli.provider :as mp]
-            [malli.core :as m]
-            [app.errors :as e]
-            [clojure.set :refer [subset?]]
-            [buddy.hashers :as buddy-hashers]
-            [buddy.sign.jwt :as jwt]))
+  (:require
+   [app.errors :as e]
+   [buddy.hashers :as buddy-hashers]
+   [buddy.sign.jwt :as jwt]
+   [clojure.set :refer [subset?]]
+   [io.pedestal.log :as pl]
+   [malli.instrument :as mi]
+   [malli.core :as m]))
 
 (def db
   {"user1"
@@ -46,7 +40,6 @@
 
 (defn unsign-token [token]
   (pl/info "unsigning token:" token)
-  (println token)
   (try (jwt/unsign token private-key {:alg :hs512})
        (catch Exception e (do (pl/error "jwt error" (ex-data e)) (throw e)))))
 
@@ -62,6 +55,7 @@
    (fn [ctx]
      (let [token (get-in ctx [:request :headers "authorization"])
            user-data (unsign-token token)]
+
        (pl/info "token user data" user-data)
        (update-req ctx {:user user-data})))})
 
@@ -74,7 +68,7 @@
 (defn login [db]
   {:enter
    (fn [r]
-     (e/v s-request r)
+     ;; (e/v s-request r)
      (let [username (get-in r [:request :body-params :username])
            password (get-in r [:request :body-params :password])
            user (get db username)]
@@ -102,5 +96,11 @@
        (if (has-roles? user-roles roles)
          ctx
          (throw (new Exception)))))})
+(m/=> role [:=> [:cat :int] [:boolean]])
 
-(subset? (set ["admin"]) (set ["user"]))
+;; (defn plus1 [x] (inc x))
+;; (m/=> plus1 [:=> [:cat :int] [:int {:max 6}]])
+
+;; (mi/instrument!)
+;; (m/function-schemas)
+;; (plus1 "a")

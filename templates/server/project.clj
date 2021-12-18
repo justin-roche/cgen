@@ -5,14 +5,15 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :main app.core/main
 
-  :plugins [[lein-environ "1.2.0"]
-            [io.aviso/pretty "1.0"]]
+  :plugins [[lein-environ "1.2.0"]]
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [org.clojure/tools.namespace "1.2.0"]
                  [org.clojure/data.json "2.4.0"]
                  [environ "1.2.0"]
-                 [io.aviso/pretty "1.0"]
+                 [aprint "0.1.3"]
                  [clj-http "3.12.3"]
+                 ;; http://clojuremongodb.info/articles/misc.html
+                 [org.slf4j/slf4j-nop "1.7.12"]
                  [com.stuartsierra/component "1.0.0"]
                  [io.pedestal/pedestal.service       "0.5.9"]
                  [io.pedestal/pedestal.service-tools "0.5.9"] ;; Only needed for ns-watching; WAR tooling
@@ -20,22 +21,21 @@
                  [io.pedestal/pedestal.log         "0.5.9"] ;; Logging and runtime metrics
                  [io.pedestal/pedestal.interceptor "0.5.9"] ;; The Interceptor chain and the Interceptor API
                  [io.pedestal/pedestal.route       "0.5.9"] ;; Efficient routing algorithms and data structures
+                 [metosin/malli "0.7.3"]
                  [metosin/reitit "0.5.15"]
                  [metosin/reitit-pedestal "0.5.15"]
                  [buddy "2.0.0"]
-                 [io.aviso/logging "0.2.0"]
                  [com.novemberain/monger "3.1.0"]
-                 [org.slf4j/slf4j-simple       "1.7.28"]
                  [org.clojure/java.jdbc "0.7.8"]
                  [com.jakemccrary/lein-test-refresh "0.25.0"]
-                 [org.postgresql/postgresql "42.2.5.jre7"]
-                 [com.mchange/c3p0 "0.9.5.2"]]
+                 ;; [com.mchange/c3p0 "0.9.5.2"]
+                 ]
   :repl-options {:init-ns app.user}
   :test-refresh {;; Specifies a command to run on test
                  ;; failure/success. Short message is passed as the
                  ;; last argument to the command.
                  ;; Defaults to no command.
-                 :notify-command ["terminal-notifier" "-title" "Tests" "-message"]
+                 :notify-command ["-title" "Tests" "-message"]
 
                  ;; set to true to send notifications to growl
                  ;; Defaults to false.
@@ -91,16 +91,13 @@
                  ;; to let you specify a shorter flag than the default
                  ;; :test-refresh/focus.
                  :focus-flag :test-refresh/focus}
-  :profiles {:test {:plugins [[com.jakemccrary/lein-test-refresh "0.24.1"]
-                              [io.aviso/pretty "1.0"]]
+  :profiles {:test {:plugins [[com.jakemccrary/lein-test-refresh "0.24.1"]]
                     :env {:db-host "localhost"
                           :db "mongo-test"
                           :cred-user "root"
                           :cred-password "rootpassword"
                           :cred-db "admin"}}
-             :dev {:plugins [[com.jakemccrary/lein-test-refresh "0.24.1"]
-                             [io.aviso/pretty "1.0"]]
-
+             :dev {:plugins [[com.jakemccrary/lein-test-refresh "0.24.1"]]
                    :env {:db-host "localhost"
                          :db "mongo-test"
                          :cred-user "root"

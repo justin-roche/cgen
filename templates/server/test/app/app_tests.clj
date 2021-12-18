@@ -1,8 +1,12 @@
+;; https://github.com/razum2um/aprint
 (ns app.app-tests
   (:require
    [clojure.tools.namespace.repl :as rp]
    [clojure.test :as t]
    [app.system :as system]
+   [aprint.core :refer [aprint]]
+   [malli.core :as m]
+   [app.auth :as auth]
    [clojure.data.json :as json]
    [clj-http.client :as client]
    [com.stuartsierra.component :as component]))
@@ -12,7 +16,8 @@
                        :accept :json})
 
 (def auth-headers {:headers {"Authorization" "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6MSwicm9sZXMiOlsiYWRtaW4iLCJ1c2VyIl0sImV4cCI6MTY0MDQwNjQ3MX0.K_FUbrjpPd2IJaOYnqmG8DtPe43omUueAoupCLC_c7OhCZ68jwm6DgaAlJCN1tPViFP9_-FOeZ6ofR8FxJAYMg"}})
-(def invalid-auth-headers {:headers {"Authorization" "xxx"}})
+
+(def invalid-auth-headers {:headers {"Authorization" "this is an invalid header"}})
 
 (def non-admin-auth-headers {:headers {"Authorization" "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6Miwicm9sZXMiOlsidXNlciJdLCJleHAiOjE2NDA0MDcxMDF9.hElFSsbzZN_Q0hdvUXFsTsWHEhCTr75SBwiMBKQTTEujXIN91cfTQXk2nA2o553pZtPw0371H3X85pSj5S_jTg"}})
 (def base "http://localhost:8890/")
@@ -28,7 +33,7 @@
   (println "sending valid req")
   (let [o (merge request-options auth-headers)
         r (client/get "http://localhost:8890/authorized" o)]
-    (println (:status r))
+    (aprint r)
     (:status r)))
 
 (defn invalid-token-req []
@@ -84,9 +89,12 @@
     (try
       (let [result (test)]
         (component/stop-system s1)
-        (println "\ntest result" result)
+        (println "\ntest result")
+        (aprint result)
         result)
-      (catch Exception e (component/stop-system s1)))))
+      (catch Exception e (do ;;
+                           (println  "exception of type: " (type e))
+                           (component/stop-system s1))))))
 
 (t/deftest valid-token ()
   (t/is (= 200 (run-test valid-token-req))))
@@ -105,4 +113,8 @@
 
 (t/deftest admin ()
   (t/is (= 200 (run-test admin-req))))
+
+;; (t/deftest schema ()
+;;   (t/is (= 200 (auth/plus1 "a"))))
+
 

@@ -1,11 +1,14 @@
 (ns app.user
   (:require
-   [clojure.tools.namespace.repl :as rp]
-   [clojure.test :as t]
-   [app.app-tests :as ts]
    [app.system :as system]
    [clojure.data.json :as json]
-   [clj-http.client :as client]
+   [app.auth :as auth]
+   [aprint.core :as aprint]
+   ;; [sl4j/sl4j-nop]
+   [app.app-tests :as appt]
+   [clojure.edn :as edn]
+   [clojure.test :as t]
+   [clojure.tools.namespace.repl :as rp]
    [com.stuartsierra.component :as component]))
 
 (defn refresh-and-run-tests []
@@ -23,6 +26,14 @@
   (rp/refresh :after 'app.user/refresh-and-run-tests)
   (catch Exception e (clojure.pprint/pprint (str "caught exception: " (.toString e)))))
 
+(defn to-json [v]
+
+  (-> v
+      edn/read
+
+;; json/write-str
+      ;; json/read-str
+      ))
 ;; (try
 ;;   (rp/refresh :after 'app.user/run-system)
 ;;   (catch Exception e (clojure.pprint/pprint (str "caught exception: " (.toString e)))))
