@@ -55,7 +55,6 @@
    (fn [ctx]
      (let [token (get-in ctx [:request :headers "authorization"])
            user-data (unsign-token token)]
-
        (pl/info "token user data" user-data)
        (update-req ctx {:user user-data})))})
 
@@ -72,7 +71,7 @@
      (let [username (get-in r [:request :body-params :username])
            password (get-in r [:request :body-params :password])
            user (get db username)]
-       (println (str "auth data: " username " " password))
+       (pl/info "auth data" (str  username " " password))
        (if (and user (buddy-hashers/check password (:password user)))
          (let [r2 (assoc-in r [:request :token] (create-token user))]
            r2)
@@ -83,23 +82,22 @@
   (get-in ctx [:request :user :roles]))
 
 (defn has-roles? [user-roles roles]
-  (println "subset: " (subset? (set roles) (set user-roles)))
   (subset? (set roles) (set user-roles)))
 
 (defn role [roles]
+  ;; (pl/info "token user roles" user-roles)
+  ;; (pl/info "required roles" roles)
   {:name ::verify-role
    :enter
    (fn [ctx]
      (let [user-roles (get-user-roles ctx)]
-       (pl/info "token user roles" user-roles)
-       (pl/info "required roles" roles)
        (if (has-roles? user-roles roles)
          ctx
          (throw (new Exception)))))})
 (m/=> role [:=> [:cat :int] [:boolean]])
 
-;; (defn plus1 [x] (inc x))
-;; (m/=> plus1 [:=> [:cat :int] [:int {:max 6}]])
+(defn plus1 [x] (identity x))
+(m/=> plus1 [:=> [:cat :int] [:int {:max 6}]])
 
 ;; (mi/instrument!)
 ;; (m/function-schemas)

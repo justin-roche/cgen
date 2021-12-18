@@ -25,7 +25,6 @@
   (mc/update db coll {} u {:multi true}))
 
 (defn db-disconnect [conn]
-  (print "disconnecting: db")
   mg/disconnect conn)
 
 (defn db-connect [{:keys [cred-db cred-user cred-password host port db]}]

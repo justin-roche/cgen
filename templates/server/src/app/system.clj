@@ -10,7 +10,6 @@
 
 (defn new-system
   []
-  (println  "starting system")
   (component/system-map
    :service-map
    {:env          env-mode

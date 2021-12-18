@@ -2,9 +2,9 @@
   (:require
    [clojure.test :refer :all]
    [io.pedestal.log :as pl]
-   [io.pedestal.log :as pl]
    [io.pedestal.test :refer :all]
    [io.pedestal.interceptor.error :as pe]
+   [aprint.core :refer [aprint]]
    [malli.core :as m]
    [malli.error :as me]))
 
@@ -38,12 +38,12 @@
                               (update-res ctx {:status 500 :body "......"})
 
                               :else
-                              (println  "unhandled exception!!!"))))
+                              (aprint "unhandled exception!!!" e))))
 
 (defn v [schema input]
   (let [r (m/validate schema input)]
     (if (not r)
-      (println (str "\n***Validation Error***\n" (me/humanize (m/explain schema input))));   (do
+      (aprint "validation error:" (me/humanize (m/explain schema input)));   (do
       nil)))
 
 (defn throw [status]
