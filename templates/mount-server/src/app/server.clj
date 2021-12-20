@@ -6,10 +6,12 @@
    [app.config :refer [config]]
    ;; [reitit.http :as http]
    [io.pedestal.http :as http]
+   [taoensso.truss :as truss :refer [have]]
    [app.router :as r]))
 
 (defn start-server [service-map]
   (print "starting server")
+  (have keyword? (::http/type service-map))
   (-> (merge service-map {::http/routes r/routes})
       (#(http/start (http/create-server %))))
   ;; (-> service-map
@@ -33,5 +35,5 @@
 ;; (mount/defstate server :start (start-server config)
 ;;   :stop (ps/stop {}))
 
-;; (start)
-;; (stop)
+(start)
+(stop)
