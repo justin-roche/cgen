@@ -2,7 +2,7 @@
   (:require
    [io.pedestal.http.route :as route]
    [app.hero :as hero]
-   ;; [app.auth :as auth]
+   [app.auth :as auth]
    [app.errors :as errors]
    [io.pedestal.interceptor :as i]
    [reitit.http.coercion :as coercion]
@@ -35,31 +35,31 @@
                                        (multipart/multipart-interceptor)]}})
 
 (def routes [""
-             ;; {:interceptors [errors/errors-handler
-             ;;       ;; (get-db-interceptor db)
-             ;;                 ]}
-             ;; ["/login"
-             ;;  {:post
-             ;;   {:handler (fn [ctx]
-             ;;               {:status 200
-             ;;                :body
-             ;;                {:message "Authorization success"
-             ;;                 :token (select-keys ctx [:token])}})
-             ;;    :parameters {:body [:map
-             ;;                        [:password string?]
-             ;;                        [:username string?]]}
-             ;;    :interceptors [;; (auth/login auth/db)
-             ;;                   ]}}]
-   ;; ["/authorized"
-   ;;  {:get
-   ;;   {:handler (fn [ctx]
-   ;;               {:status 200})
-   ;;    :interceptors [(auth/verify-token)]}}]
-   ;; ["/admin"
-   ;;  {:get
-   ;;   {:handler (fn [ctx]
-   ;;               {:status 200})
-   ;;    :interceptors [(auth/verify-token) (auth/role ["admin"])]}}]
+             {:interceptors [errors/errors-handler
+                   ;; (get-db-interceptor db)
+                             ]}
+             ["/login"
+              {:post
+               {:handler (fn [ctx]
+                           {:status 200
+                            :body
+                            {:message "Authorization success"
+                             :token (select-keys ctx [:token])}})
+                :parameters {:body [:map
+                                    [:password string?]
+                                    [:username string?]]}
+                :interceptors [;; (auth/login auth/db)
+                               ]}}]
+             ["/authorized"
+              {:get
+               {:handler (fn [ctx]
+                           {:status 200})
+                :interceptors [(auth/verify-token)]}}]
+             ["/admin"
+              {:get
+               {:handler (fn [ctx]
+                           {:status 200})
+                :interceptors [(auth/verify-token) (auth/role ["admin"])]}}]
              ["/hero"
 
               {:get {:handler hero/get-heroes}
