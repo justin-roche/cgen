@@ -10,13 +10,15 @@
                  [org.clojure/tools.namespace "1.2.0"]
                  [org.clojure/data.json "2.4.0"]
                  [environ "1.2.0"]
+                 [com.taoensso/timbre "5.1.2"] ; See CHANGELOG for details
                  [vvvvalvalval/scope-capture "0.3.2"]
                  [com.taoensso/truss "1.6.0"]
                  [aprint "0.1.3"]
                  [clj-http "3.12.3"]
                  ;; http://clojuremongodb.info/articles/misc.html
                  [org.slf4j/slf4j-nop "1.7.12"]
-                 [com.stuartsierra/component "1.0.0"]
+                 ;; [com.stuartsierra/component "1.0.0"]
+                 [mount "0.1.16"]
                  [io.pedestal/pedestal.service       "0.5.9"]
                  [io.pedestal/pedestal.service-tools "0.5.9"] ;; Only needed for ns-watching; WAR tooling
                  [io.pedestal/pedestal.jetty         "0.5.9"]
