@@ -1,11 +1,6 @@
 (ns app.user
   (:require
    [app.system :as system]
-   [clojure.data.json :as json]
-   [app.auth :as auth]
-   [aprint.core :as aprint]
-   [app.app-tests :as appt]
-   [clojure.edn :as edn]
    [clojure.test :as t]
    [clojure.tools.namespace.repl :as rp]
    [com.stuartsierra.component :as component]))
