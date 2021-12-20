@@ -1,5 +1,7 @@
 (ns app.config
   (:require [mount.core :refer [defstate]]
+
+            [io.pedestal.http :as http]
             [environ.core :refer [env]]))
 
 (def env-mode 'dev')
@@ -13,10 +15,10 @@
             :cred-user (env :cred-user)
             :cred-db (env :cred-db)
             :cred-password (env :cred-password)
-            :http/type   :jetty
-            :http/port   8890
-            :http/join?  false
-            :http/routes  []}]
+            :server {::http/type   :jetty
+                     ::http/port   8890
+                     ::http/join?  false
+                     ::http/routes  []}}]
     (println "start config")
     c))
 
